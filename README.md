@@ -6,6 +6,8 @@ That being said, we're going to be building an application that will allow a sta
 
 One of the features being able to send out mass emails to product users. Secondly, maybe we don't want to send out these emails for free, so all of a sudden we may need billing inside of this application which would require us to have separate billing account for our end users which would then require authentication as well. Very quickly, we can see that there will various features that will go into this application.
 
+![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/App%20Overview.jpg)
+
 # Tech Stack
 
 Referring to the detailed app overview, when it comes to using Google OAuth to sign in, we'll be making use of an Express back-end server and storing user information inside of Mongo DB. To handle the actual authentication and OAuth process we'll be using a third party library called Passport.js. Passport.js is going to make most of the authentication work easier. Next is handling payments, we wont be taking credit cards numbers direct nor will we take credit cards into our application. Instead, we'll use a third party service called Stripe to handle the billing side of our app. Whenever a user pays us some amount of money, we'll record that amount inside of our Mongo DB. Next, whenever a user attempts to create another campaign or survey, we'll make use of React and Redux. Whenever someone wants to enter a list of emails or some details about what they want to collect as far as surveys and feedback, we'll make use of React, Redux and Redux Form. After we've collected all the information for our campaign to send out, we will send this list of emails to all the surveyees. For that, we'll be using a third party email provider which will take hard integration from our side.
@@ -17,15 +19,25 @@ When a surveyee gets the actual email requesting feedback, we need to make sure 
 
 Whenever a user navigates inside of their browser to our domain, for example, feedback.io. We're going to send them a HTML document and some javascript files that contain a react application. So when the user goes to feedback.io, we're going to send them some files that ill get some content or HTML to appear on the screen. That's going to be the react side of the screen. The react side won't really know what information to display. In our app, we're going to be using Mongo DB which will record and store all the different surveys, campaigns and all the different emails that we send out to people over time. One big problem will be effectively communicating all the data we store inside of our Mongo DB to our React application. The react app will never talk to our Mongo DB and instead we'll implement an Express API that's going to be the middleman. This Express API will contain a bunch of business logic to take incoming requests from the react application, pull some information from our Mongo DB and then send that information back to the react side of our app. The Express API and react app are going to be communicating via HTTP requests (AJAX, JSON).
 
+
+![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/Detailed%20App%20Overview.jpg)
+
+
 # Relationship between Node and Express
 
 <b>Node:</b>javascript runtime used to execute code outside of the browser. Traditionally, javascript code has always been executed inside of some web browser because that's where its began. It used to execute within the browser, to give interactivity or make them feel more dynamic. Over time people realized that they wanted to use javascript in other locations outside of the browser and that's the source of Node.js.
 
 <b>Express:</b> library that runs in the Node runtime. Has helpers to make dealing with HTTP traffic easier. You can imagine express as being a little collection of functions or helpers for making working with the HTTPS aspects a little easier. So, express isn't its own standalone code base per se or its own runtime. It's a library that has a collection of helper methods to make writing servers easier.
 
-[Insert Diagram]
+
+![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/Communication%20Chart.png)
+
 
 The first thing to understand is that when you are running some server on your local machine, your server is going to be listening for HTTP traffic on a single individual port. You can think of a port as being like a little door through which traffic like HTTP requests can be routed. So we might have some incoming request being issued by say, our browser, also running on our local machine. And it might make a request and that request might be coming in to some very specific port on our machine. WE are going to configure Node and Express to listen to traffic that is attempting to access a very specific port on our local machine. Now, Node.js is specifically going to be listening for traffic on that port and waits for some information to flow in through it. Node is then going to take that information that flows in from that incoming HTTP request and hand it off to the Express side of our application. We actually don't need to use Express, we can simply use Node to handle all of the HTTP traffic; however, we're using Express because it makes our lives a bit easier. Express is then going to look at the request and then decide what little bit of logic in the Express application we're building  is going to handle or somehow respond to this incoming request. In Express, we write collections of what are called route handlers. Route handlers are used to handle requests that are asking for a very specific service. So we might have one route handler that's responsible for authenticating a user. We might have another handler that's responsible for logging out a user and we might have a third one that allows a user to create and save a new survey or campaign. To iterate, Node.js is going to take the incoming traffic and route it to Express in which Express will then figure out where to send that request to. We will write the route handlers which will then process the incoming request and generate some outgoing response. The response will then be sent back to the running Node process and Node will then respond to the author or whoever made the HTTP request.
+
+
+![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/nodeexpress.JPG)
+
 
 # Index.js
 
