@@ -53,3 +53,10 @@ Next the forward slash (*/*) tells express to watch for incoming requests that a
 So now onto the arguments to the arrow function which the second argument of the *Get* request handler. The first argument is referred to as *req* (request). Its a javascript object that represents the incoming request. So it has a bunch of data that says a little bit about who is making the request and some associated data with it. Next, is the *res* argument which represents response. It represent the response or the data that is baout to be sent back to whoever made the incomign request. Next is the body of the function, we put in there *res.send* and then we provided a plain javascript object that tells express that we want to immediately close the request and send back a response containing the JSON data: *hi: "there"*.
 
 The last line we have at this point is *app.listen(5000)* which instructs express to tell Node that it wants to listen for incoming traffic on port 5000.  
+
+# Application Deployment
+
+It's a little soon to deploy the app since we've only just worked on the barebones of the project; however its better to get it out of the way first. Heroku as well as other deployment sites will have a checklist developers must follow. The diagram below perfectly summarizes each step.
+
+First comes the dynamic port binding. In a nutshell, when we deploy our application, Heroku is going to expect us to listen for incoming HTTP traffic on a particular port.
+If you go back to index.js, you'll see that express is telling Node to listen to incoming HTTP traffic on port 5000. However, when we deploy on Heroku, Heroku will tell us which port we need to listen to instead. This is done because Heroku hosts many differnt applications on a single server or a single machine
