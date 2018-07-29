@@ -77,3 +77,13 @@ The second step is to tell Heroku what specific Node environment we want to use.
 The third step is the start script. So when we deploy our app, we have to tell Heroku what command it should run to start up our server. See our package.json file under the script section which it should say "start": "node index.js".
 
 The last step is creating a .gitignore file. The purpose of this file is to make sure that we do not accidentally commit any of the dependencies that we have created or installed. The node_modules folders that was automatically created when installed Express don't get committed and detected by Heroku when we deploy them. We let Heroku install its own dependencies. Overall, we don't want our dependencies to version control when we deploy our app.
+
+# Heroku Deployment
+
+![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/moredeploymentimage.JPG)
+
+We will not be delving any further details regarding deployment onto Heroku. The diagram above has good instruction on what to do as well as the following links below:
+
+https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
+
+https://devcenter.heroku.com/articles/heroku-cli
