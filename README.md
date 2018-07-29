@@ -65,10 +65,6 @@ The last line we have at this point is *app.listen(5000)* which instructs expres
 
 It's a little soon to deploy the app since we've only just worked on the barebones of the project; however its better to get it out of the way first. Heroku as well as other deployment sites will have a checklist developers must follow. The diagram below perfectly summarizes each step.
 
-
-   ![alt text](https://github.com/zohaibshahzadTO/FeedbackApp/blob/master/assets/herokudeploymentlist.JPG)
-
-
 First comes the dynamic port binding. In a nutshell, when we deploy our application, Heroku is going to expect us to listen for incoming HTTP traffic on a particular port.
 If you go back to index.js, you'll see that express is telling Node to listen to incoming HTTP traffic on port 5000. However, when we deploy on Heroku, Heroku will tell us which port we need to listen to instead. This is done because Heroku hosts many differnt applications on a single server or a single machine and it wants the ability to just dynamically tell us where traffic is going to be coming from. In order to setup the dynamic port binding, go to index.js add an additional line *const PORT = process.env.PORT;*.
 
