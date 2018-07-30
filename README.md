@@ -135,3 +135,11 @@ Now the passport Google OAuth20 module actually exports a couple of different pr
     passport.use(new GoogleStrategy());
 
 Let's start with what's going on inside of the function call. *new GoogleStrategy* creates an new instance of the Google Passport Strategy. It essentially says "hey application, I want to somehow be able to authenticate my users with Google" and inside of the new GoogleStrategy constructor, we're going to pass in some configuration that tells this Google strategy how to authenticate users inside of our application. You can think of *passport.use* as some generic register, something to say "hey passport, you know how to handle authentication in general but you don't really know how to authenticate users with a very specific service or provide. So you can think of it as saying "passport, I want you to be aware that there is a new strategy available and here it is. Understand the users can use this to authenticate themselves inside of our application.
+
+# Enabling Google OAuth API
+
+We left things off in that we need to now pass some additional configuration options to the Google Strategy. Before we make use of the Google Strategy, we have to give it two important options, a client ID and a client secret. Both are provided directly from Google's overall service. Recall when we went through the OAuth flow, we had said that we would take some user who is trying to visit and login to the app or */auth/google* we would forward them on to Google where they would then be asked to grant us permission to their profile. Lets now sign up for the Google OAuth API. By going on to the website below:
+
+    https://www.console.developers.google.com
+
+We can now sign in with our google account, create a new project (feedback-dev) and then enable the API. Something that confuses people using the google oauth api for the first time may have trouble finding it. You need to search for the "Google+API". After enabling the API in our accounts, we want to now generate the API credentials. By doing so we'll generate the Client ID and Client Secret.
