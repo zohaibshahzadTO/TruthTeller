@@ -167,3 +167,25 @@ Visit the following address:
     localhost:5000/auth/google
 
 You'll notice an error that says "redirect_uri_mismatch". We'll delve into it shortly and figure out what that really means.
+
+# Authorized Redirect URI's
+
+Let's dissect the following URL that resulted in the earlier error.
+
+    https://accounts.google.com/o/oauth2/v2/auth?
+    response_type=code&
+    redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Fgoogle%2Fcallback&
+    scope=profile%20email&
+    client_id=5919214599-btpefgmd9uaj54cr703plcmn9jgqgrlv.apps.googleusercontent.com
+
+The very first property we have is the response type and its saying we're expected a code back. Recall that the user grants permission to our app and the user would be sent back to our app with this code that we can use to exchange with Google to get some information about the users profile. We get that certain and get code and can use it to make a follow-up request to Google to ask for some more information about that user. So that's working out well.
+
+The next property is part of our error message we got. Lets skip that for now. The next property is the scope which encompasses the two pieces of information we're asking for. And then finally we also have the client ID which identifies our app to Google's servers.
+
+Now lets talk about the error message tied to our URL. If you look closely you'll see HTTP, localhost, 5000, auth, google, callback. So the redirect URI is the address that a user should be redirected to from Google after they give permission to our app. But here's the problem, imagine that we're hackers and we want to somehow hijack a user's authentication OAuth flow. Maybe if we took this entire URL which attempts to authenticate some user and tell the user "hey, these people over her like whoever owns this ID and wants to get access to your user account". Lets say we replaced the clientID with a really official clientID because recall that the clientID is public. So maybe we took AirB&B's clientID from Google Earth and we put it in here and then we wanted to hijacks the user and think they were authenticating with AirB&B, but in fact we we're going to send them back to our servers and record all of their account information which is obviously malicious. One way we could pull this off is by changing the redirect URI into another route address of ours and so now if we could get away with this, we could trick the user into clicking this lin. The user would be presented with some message that says "oh it looks like AirB&B is trying to get access to your profile" but then the google server would send them back to our malicious server and steal their information. So how does that relate to us?
+
+Well our error was 'URI redirect mismatch'. In other words when setup our oauth flow and we said send the user back to '/auth/google/callback', we had not properly setup our account to say that, that was a valid URI to redirect that user to. Google internally tracks what valid URI's or URL's a user can be redirected to so that malicious users can't just replace the redirect URI to another random route. How do we fix it? They pasted the link where we could go to verify and make that address official.
+
+https://console.developers.google.com/apis/credentials/oauthclient/5919214599-btpefgmd9uaj54cr703plcmn9jgqgrlv.apps.googleusercontent.com?project=5919214599
+
+We made 'localhost:5000/auth/google/callback' an authorized redirect URI and that actually the link that would kick off our OAuth flow as well. Now its accessible.
