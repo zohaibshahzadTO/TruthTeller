@@ -153,3 +153,17 @@ Lets discuss what each key actually does. First the clientID. This key acts as a
 # Google Strategy Options
 
 What we'll do now is import the ClientID and ClientSecret and we do that by importing the key.js file into the index.js file and assigning it to a const variable. After we can then pass those two keys to the Google Strategy. For the first argument of the GoogleStrategy, I'm going to add an empty object and then give it a key of ClientID and the ClientSecret and assign those keys from the key.js file. The is another argument or option that we'll add shortly but lets recall the OAuth flow. The tricky part during the flow is after the user grants permission to our application to retrieve their information. We had said that they get redirected back over to our server but what address or what route? We have to manually specify where we want the user to be sent to. In the OAuth flow diagram above, we stated that the user gets sent back to our server on the route of *auth/google/callback*. And so presumably we all have some route handler here or some logic to say whenever a user comes to this route, we want to then take the code and have follow-up requests done via Google servers. So the third option that we're going to pass into the GoogleStrategy is the route *auth/google/callback*. After doing so, we'll shortly add a route handler to our express application to handle a user coming back to our application on this route right here. There's one more argument we're going to provide to the GoogleStrategy before we close out that object.
+
+# Testing OAuth
+
+In this section, we're going to be testing our OAuth flow and then put together some configuration to say "hey, whenever a user goes to '/' or '/google' we should then start the entire process being managed by passport". Recall that we'll have Express do different things based on what route a user visits, we put together a route handler. Right now we'll put together a route handler inside of our app that makes sure that user gets kicked into this passport flow (see index.js update).
+
+Enter the following into your terminal:
+
+    node index.js
+
+Visit the following address:
+
+    localhost:5000/auth/google
+
+You'll notice an error that says "redirect_uri_mismatch". We'll delve into it shortly and figure out what that really means.
