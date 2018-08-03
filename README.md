@@ -1,4 +1,4 @@
-# Feedback Collection Tool
+# The Truth Teller (Feedback Collection Application)
 
 Imagine you're in another persons shoes. Imagine you're a startup owner or a product manager. You're someone that has created and deployed some type of application or service. Now maybe your users are making use of your app and service but you noticed that your users seemed to just suddenly stop using your application altogether. And so step one of figuring out why people are quitting your app is you ask why people are quitting. So lets imagine you are a product manager and at some point in time you want to collect some amount of feedback from your users so that you can understand why people are using, not using it and how you can make it better. Ideally, you might decide to send a bunch of emails to your customers, say around 20, 50, or even 1000 that says "hey there, it would be great if you could give me some feedback so I can better understand how you use our app and whether or not you enjoy it". Maybe some number of your customers replied to your email and give you some amount of feedback and you then tabulate or summarize all of that feedback into one result set and you can then use that to somehow make your application or service better with said feedback.
 
@@ -189,3 +189,35 @@ Well our error was 'URI redirect mismatch'. In other words when setup our oauth 
 https://console.developers.google.com/apis/credentials/oauthclient/5919214599-btpefgmd9uaj54cr703plcmn9jgqgrlv.apps.googleusercontent.com?project=5919214599
 
 We made 'localhost:5000/auth/google/callback' an authorized redirect URI and that actually the link that would kick off our OAuth flow as well. Now its accessible.
+
+# OAuth Callbacks
+
+If we enter the following URL:
+
+    localhost:5000/auth/google
+
+We'll actually be taken the google login where we can perform OAuth using our google email and so on. However you'll quickly discover after clicking it that we'll be redirected to an error which says "Cannot GET /auth/google/callback". Our server does not yet have a route handler setup to handle a request coming into our server. If you look at the URL then, you'll notice a code which is the code google has given us so we can follow up with them and retrieve the users information.
+
+# Access and Refresh Tokens
+
+Last section, we saw that after running the app and going on "localhost:5000/auth/google" we could finally sign in. After a few more steps and after our server followed up with Google servers with the code it was granted, it exchanged it with users actual profile and email address. After the follow up request is made, the callback function or the arrow function which is the second argument to the GoogleStrategy was executed. So that arrow function is our opportunity to take all the information that we just got back from Google such as the access token and user information is our opportunity to create a new user inside of our database that says "hey here's this person, they have signed up before using Google. They now have access to our application and they can create surveys and all that kind of good stuff  inside of our app". The access token proves that we have been granted permission to the users information and allows us to follow up and request more. The refresh token allows us to refresh the access token. The access token automatically expires after some amount of time and we can be given optionally a refreshed token that allows us to automatically update the access token and essentially reach into the users account for more additional time.
+
+At this point we've finally completed the passport portion of the OAuth flow and now its upto to us to create a new record inside of our database and then figure a way of making the user considered to be logged into our app.
+
+# Nodemon Setup
+
+Everytime I've been making changes to the OAuth flow, I've had to manually restart the server.  We're going to install a module that allows to us make changes without doing that. Go onto the terminal and install the following:
+
+    npm install --save nodemon
+
+Go to the package.json file and under scripts, enter a new script called:
+
+  "dev": "nodemon index.js"
+
+We've now installed nodemon and instead of starting our server constantly with this command, we instead define this dev script inside of our scripts section which now allows any other developer in the future to come start the server with that command and then being able to make changes without restarting it.
+
+To test it out, enter the following into terminal:
+
+    npm run dev
+
+Now if you go back into the index.js file and make any change and save it, nodemon will restart the server automatically and reflect on those changes.
