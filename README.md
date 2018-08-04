@@ -221,3 +221,9 @@ To test it out, enter the following into terminal:
     npm run dev
 
 Now if you go back into the index.js file and make any change and save it, nodemon will restart the server automatically and reflect on those changes.
+
+# Server Structure Refactor
+
+Below is diagram depicting how we'll be restructuring our whole index.js file, our main focus being the passport modules. We already have a config folder which holds all of our API keys and maybe any other configuration information that we might need. We'll then add two more folders: the routes folder which will have one file for each group of routes that we have. Currently, we have two handlers inside of our index.js file and they both have something to with authentication. And so we'll have a single file inside of our routes folder to handle both of these handlers because they're very similar in function. Next we will also create a services directory which will house a bunch of logic that kind of helps or configures our express app that way we expect. And so in that file, we'll have a js file where we're going to put in all of our passport configuration like the passport.use statement that configures our GoogleStrategy.
+
+
