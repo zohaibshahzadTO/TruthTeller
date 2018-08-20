@@ -227,13 +227,19 @@ Now if you go back into the index.js file and make any change and save it, nodem
 
 Below is diagram depicting how we'll be restructuring our whole index.js file, our main focus being the passport modules. We already have a config folder which holds all of our API keys and maybe any other configuration information that we might need. We'll then add two more folders: the routes folder which will have one file for each group of routes that we have. Currently, we have two handlers inside of our index.js file and they both have something to with authentication. And so we'll have a single file inside of our routes folder to handle both of these handlers because they're very similar in function. Next we will also create a services directory which will house a bunch of logic that kind of helps or configures our express app that way we expect. And so in that file, we'll have a js file where we're going to put in all of our passport configuration like the _passport.use_ statement that configures our GoogleStrategy.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/refactorimg.JPG)
+
 # Theory of Authentication
 
-In the diagram below, you can see that we've pretty much completed the few steps that were involved with passport.js regarding OAuth. Currently, our task is to now get user details and create a new record in the database using MongoDB. Before we delve into that, lets dive a little deeper into why we even need a database, why even use OAuth in the first place and why does authentication even mean?
+We've pretty much completed the few steps that were involved with passport.js regarding OAuth. Currently, our task is to now get user details and create a new record in the database using MongoDB. Before we delve into that, lets dive a little deeper into why we even need a database, why even use OAuth in the first place and why does authentication even mean?
 
 The first thing to understand is HTTPS is stateless. We communicate between our browser and our Express web server by HTTP requests. HTTPS is stateless and what that means is that any two given requests that we make, HTTP inherently has no way to identify or share information between two separate requests. So you can really identify who is making any given request between any given number of requests. How do we get around this?
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/theoryofauth.JPG)
+
 The diagram below summarizes what happens with every authentication scheme. You have your browser and the browser makes some requests to some server and says "hey please, log me in", and you provide the login information and the server receives it. The server then send out some identifying piece of information that is unique to you. It responds with that unique information along with request back to the server. We can refer to that as cookie, token, etc. That cookie is your proof that 5 minutes ago or one day ago, you logged into the application and the unique key corresponds to you. When you make that follow-up request to the server and include that cookie, the server sees that cookie and confirms it. The server then follows up with all the emails, posts, tweets that belong to you specifically.
+
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/theoryofauth2.JPG)
 
 Inside our application, we are going to use cookie based authentication. What that means is that when we get some initial request to our server, like our express API, we're going to say "please log me in". For us its going to be Google OAuth. After the user goes through the OAuth process, we're going to generate some identifying piece of information. In the response that we send back to the user for the OAuth request, we're going to include what is called a "header" inside of the response that gets sent back to the browser. The header is going to have a property called "set-cookie" and its going to set to be some random token which will uniquely identify the user. When the browser sees this response come back and it sees in the header of the request, it will automatically strip of the token and store it into the browsers memory and is going to automatically append that cookie with any follow-up request sent to the server and the server will recognize it.
 
@@ -241,11 +247,13 @@ Inside our application, we are going to use cookie based authentication. What th
 
 We need to find some unique identifying token in the user's Google profile which is consistent between logins. It will be the Google User ID (not the email address since its subject to change). We'll use that to decide if the user is the same. The Google User ID never changes for an individual.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/clientId%26Secret.JPG)
+
 # Difference between Relational Databases and NoSQL Databases
 
 **SQL databases** use structured query language (SQL) for defining and manipulating data. On one hand, this is extremely powerful: SQL is one of the most versatile and widely-used options available, making it a safe choice and especially great for complex queries. On the other hand, it can be restrictive. SQL requires that you use predefined schemas to determine the structure of your data before you work with it. In addition, all of your data must follow the same structure. This can require significant up-front preparation, as it can mean that a change in the structure would be both difficult and disruptive to your whole system.
 
-A **NoSQL database**, on the other hand, has dynamic schema for unstructured data, and data is stored in many ways: it can be column-oriented, document-oriented, graph-based or organized as a KeyValue store. This flexibility means that:
+A **NoSQL database**, on the other hand, has dynamic schema for unstructured data, and data is stored in many ways: it can be column-oriented, document-oriented, graph-based or organized as a Key-Value store. This flexibility means that:
 
 - You can create documents without having to first define their structure
 - Each document can have its own unique structure
@@ -256,11 +264,19 @@ A **NoSQL database**, on the other hand, has dynamic schema for unstructured dat
 
 Before we continue working on the OAuth flow of our application, we need to talk about the basics of MongoDB. Once we have MongoDB setup inside of our application, we can make a new user record every time someone uses our application using OAuth. Another library we'll be delving into later on is called Mongoose.js. The sole purpose of Mongoose.js is to make our lives easier when working with MongoDB. It wraps many common operations that we might have to by hand when working with MongoDB.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/detailoauthsignin.JPG)
+
 Lets first discuss how MongoDB internally stores information. Mongo internally stores records into different collections and every different collection that sits inside of our database can have many different records and we can have many different collections. So inside of one MongoDB instance, we might have a collections of users, posts, or payments. Inside of a single collection such as the users collection, we have many different individual records. In the context of a user's collection, we might imagine that every single one of these records represents someone who has signed in or signed up to our application. So we've got one record that represents a user with the name of Anna and another record that represents Alex, Bill and so on. Every record is essentially a little piece of JSON or plain JS object. Every collection is a collection of Key-Value pairs. One of the most important defining characteristics of MongoDB is that fact that it is what we refer to as being schema-less. Every record can have its own very distinct properties. You can see in the diagram, that Anna has a height property and Alex doesn't (it has an age property) and so on. This is in direct contrast to traditional database like SQL (RDBS) that have same properties for every single record.
+
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/mongodb.JPG)
 
 What does Mongoose do for us while working with MongoDB? To represent the collection and record structure that we could be writing in javascript, Express, etc., we're going to have two different concepts that are implemented by Mongoose. By making use the Mongoose library, we make use of something called a model class. A model class created with Mongoose represents an entire MongoDB collection, so the model class is used to access a single collection sitting inside of MongoDB. The model class has a bunch of functions attached to it that are designed to work with an entire collection such as creating a new record or searching all the records inside of our collection is done using a model class. Mongoose also gives us access to something called model instances. Model Instances are javascript objects that represent a single record sitting inside of a collection.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/mongoDB2.JPG)
+
 # MongoDB Setup
+
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/mongo3.JPG)
 
 For this project, we're going to be using an outside or third party service to host a copy of MongoDB for us and on our local computer, we'll continue have our Express API and pretty soon have our react application as well. First, we'll go on **mlab.com**. Sign up and then create a new database and select the following:
 
