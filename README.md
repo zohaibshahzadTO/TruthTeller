@@ -326,3 +326,19 @@ Whenever we're reaching out to our database, we're making an asynchronous call. 
 # Passport Callbacks
 
 After we have finished with user creation or user fetching to tell passport or to tell that strategy that we are all done doing our thing, we have to inform it that we're finished by calling the done callback or the **done function**. This tells passport that we have now finished making this user and it should now resume the authentication process. There are two arguments for the done function. The first argument will be an **err** object. This object communicates back to a passport that maybe something went wrong. Now if we found a user inside of a users collection that means everything went fine. The second argument will be the existing user. For the else case, recall that anytime we save a record to our MongoDB, its an asynchronous operation. We dont want to call the done function until we know for sure that the user has been successfully saved to the database. So in order to get a notification or get something to tell us that the user has been successfully saved to the database, we'll use a **.then** statement.
+
+# Encoding Users
+
+Now that we've been able to successfully save user records into our database. We now need to find a way to take our user model and generate some identifying piece of information and pass it to the user in a cookie that will then be provided in any follow up request back to our server.
+
+# Serializing and Deserializing Users
+
+# Enabling Cookies
+
+We are now ready to tell passport that it needs to make use of cookies to manage authentication inside of our application. Outside of the box, Express has no idea how to handle cookies. We're going to install a helper library called cookies session to manage cookies in our app:
+
+```
+npm install --save cookie-session
+```
+
+Now we go back to our index.js file and tell Express that it needs to make use of cookies inside of our app. We'll import both the cookie-session library and passport. We have to tell passport to keep track of our user session or our user authentication state by using cookies. We'll do this implementing a function called **app.use**. We're going to pass cookieSession into it and it'll have a configuration object. The first property will be called **maxAge** and expresses how long the cookie will exist inside of the browser before it automatically expires (30 days for us). The second property will be **keys** which will be used to encrypt our cookie. So by default whenever we send out this cookie or this token in the cookie, it will always be 100 automatically encrypted so people cannot manually change the user ID that we're storing in there. We'll then store the keys part of the object into our hidden keys.js file under config folder.
