@@ -303,6 +303,8 @@ However, we should note that the address to our MongoDB instance is not somethin
 
 Now let's delve into what Mongoose is doing with MongoDB. So remember, MongoDB itself has a driver layer or a layer of code that lets outside people interact with all the data inside of it. When we run the app in our console, we'll see two warning that being produced by how Mongoose is interacting with MongoDB. Those warnings are being produce by the MongoDB instance because of some code that exists inside of Mongoose. So until Mongoose fixes a few things, there's nothing we can do to get these messages to stop appearing.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/mongo4.JPG)
+
 # Mongoose Model Class
 
 We now are going got use Mongoose to create a new model class which will allow us to create a collection of records inside of our Mongo database. The model class isn't really suited to be in our index.js file since its associated with booting up our application. What we'll do instead is make a new directory in the project.
@@ -311,7 +313,7 @@ We now are going got use Mongoose to create a new model class which will allow u
 
 # Saving Model Instances
 
-Now that we've got our mongoose model class put together, we can use it to create a new record inside of our users collection anytime a user first signs up to our app. First thing we need to ask ourselves is where we're going to place that logic of ours in the app. When is it appropriate to create this new user. If you recall in our services folder, we have our passport.js file which contains our google strategy and the second argument that google strategy was a callback function that was automatically called anytime a user was redirected back to our application from the Google flow. This callback function has the access token, refreshed token and Google user profile as argument. So this google user profile here contains the google user ID which is the unique identifying token that we want to save into our user record.
+Now that we've got our mongoose model class put together, we can use it to create a new record inside of our users collection anytime a user first signs up to our app. First thing we need to ask ourselves is where we're going to place that logic of ours in the app. When is it appropriate to create this new user? If you recall in our services folder, we have our passport.js file which contains our google strategy and the second argument that google strategy was a callback function that was automatically called anytime a user was redirected back to our application from the Google flow. This callback function has the access token, refreshed token and Google user profile as argument. So this google user profile here contains the google user ID which is the unique identifying token that we want to save into our user record.
 
 NOTE: When dealing with schemas: one argument means you're trying to fetch something from it, two arguments means you're trying to load something into it.
 
@@ -323,6 +325,8 @@ To reiterate, we dont want more than one user record for a particular user in ou
 
 Whenever we're reaching out to our database, we're making an asynchronous call. Instead simply returning the user ID, the query returns a promise which is a tool that we use with javascript for handling asynchronous code. We'll be using a feature from ES2017 that makes using promises a little nicer. To get an indication when the query is completed, we'll chain on a **.then** statement inside of there and we will add an arrow function and the arrow function will be called whatever user was found. If one exists, we're going to call that the existing user. So this will be a model instance that represents a user who was found. Now if a user has a google ID of profile ID, then the argument existing user right there will be equal to null. So to figure out whether or not we found a user, we want to figure out whether or not **existingUser** exists or not, and so we use an if-else case. If the **existingUser** exists, that means we already have a record with the given profile ID. Else case we don't have a user record with this ID and we want to make a new record. This will fix the problem of duplicating user records for unique ID's.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/mongoose%20queries.JPG)
+
 # Passport Callbacks
 
 After we have finished with user creation or user fetching to tell passport or to tell that strategy that we are all done doing our thing, we have to inform it that we're finished by calling the done callback or the **done function**. This tells passport that we have now finished making this user and it should now resume the authentication process. There are two arguments for the done function. The first argument will be an **err** object. This object communicates back to a passport that maybe something went wrong. Now if we found a user inside of a users collection that means everything went fine. The second argument will be the existing user. For the else case, recall that anytime we save a record to our MongoDB, its an asynchronous operation. We dont want to call the done function until we know for sure that the user has been successfully saved to the database. So in order to get a notification or get something to tell us that the user has been successfully saved to the database, we'll use a **.then** statement.
@@ -332,6 +336,8 @@ After we have finished with user creation or user fetching to tell passport or t
 Now that we've been able to successfully save user records into our database. We now need to find a way to take our user model and generate some identifying piece of information and pass it to the user in a cookie that will then be provided in any follow up request back to our server.
 
 # Serializing and Deserializing Users
+
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/MongoDBCookie.JPG)
 
 # Enabling Cookies
 
@@ -343,7 +349,11 @@ npm install --save cookie-session
 
 Now we go back to our index.js file and tell Express that it needs to make use of cookies inside of our app. We'll import both the cookie-session library and passport. We have to tell passport to keep track of our user session or our user authentication state by using cookies. We'll do this implementing a function called **app.use**. We're going to pass cookieSession into it and it'll have a configuration object. The first property will be called **maxAge** and expresses how long the cookie will exist inside of the browser before it automatically expires (30 days for us). The second property will be **keys** which will be used to encrypt our cookie. So by default whenever we send out this cookie or this token in the cookie, it will always be 100 automatically encrypted so people cannot manually change the user ID that we're storing in there. We'll then store the keys part of the object into our hidden keys.js file under config folder.
 
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/userid.JPG)
+
 # Testing Authentication
+
+![alt text](https://github.com/zohaibshahzadTO/TruthTeller/blob/master/assets/testauth.JPG)
 
 Upon following the diagram above, we're going to add a third handler so we'll say whenever someone makes a request to our app and we'll give it the route of **/api/current_user**. We're assuming that we might want to have some API route that returns whoever's currently logged into the application. Now the second argument we pass our arrow function through will be automatically called whenever someone makes a request to this route right here. Remember that the arguments for this function are the **req** and **res** objects. Req represents the incoming request and res represents the outgoing response. We're simply going to send back an immediate response which will be **req.user**, so this will test to make sure that someone who has already gone through the OAuth flow and in theory logged into our application can now get access to the user.
 
