@@ -370,3 +370,13 @@ we'll actually receive the user ID as well as the google ID.
 # Logging Out Users
 
 We're now going to add a route to handle for logging users out of the application. If we go into our **authRoutes** file, we're going to create another route and say that whenever a user who is authenticated makes a request to the route **/api/logout** we will logout the user from the application. We'll be implementing the method **req.logout()** which will kill the cookie for that particular user and log them out.
+
+# Dev vs Prod Keys
+
+The way our **keys.js** file which contains all of our configuration, API and URI key's, is setup at the moment is going to eventually lead us into some trouble. At present, we have one set of these keys, what we should do is have two separate sets of keys. In the development world such as on our laptops (active dev), we should have one set of keys for MongoDB, Google API, and for all the cookies we're handling and then we should have a completely separate and different set of keys for our production.
+
+Two good reasons for this approach:
+
+- When we use prod key like this, we can store all these keys remotely on heroku servers. All the developer keys can still remain on our personal laptops. Its possible something can happen to our laptop/computers (stolen/lost).
+
+- It also allows us to have two separate Mongo databases. Whenever we deploy our application to production. We want to have a clean database existing in production that has only our users data and we always treat that as pristine data that we will never manually mess around with at any given time. In the development world, if we have a separate database, we can decide to add records, delete records, add/delete/change collections, etc., without having the fear of accidentally breaking all of our users production data.
