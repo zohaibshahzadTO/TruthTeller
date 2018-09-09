@@ -342,3 +342,21 @@ npm install --save cookie-session
 ```
 
 Now we go back to our index.js file and tell Express that it needs to make use of cookies inside of our app. We'll import both the cookie-session library and passport. We have to tell passport to keep track of our user session or our user authentication state by using cookies. We'll do this implementing a function called **app.use**. We're going to pass cookieSession into it and it'll have a configuration object. The first property will be called **maxAge** and expresses how long the cookie will exist inside of the browser before it automatically expires (30 days for us). The second property will be **keys** which will be used to encrypt our cookie. So by default whenever we send out this cookie or this token in the cookie, it will always be 100 automatically encrypted so people cannot manually change the user ID that we're storing in there. We'll then store the keys part of the object into our hidden keys.js file under config folder.
+
+# Testing Authentication
+
+Upon following the diagram above, we're going to add a third handler so we'll say whenever someone makes a request to our app and we'll give it the route of **/api/current_user**. We're assuming that we might want to have some API route that returns whoever's currently logged into the application. Now the second argument we pass our arrow function through will be automatically called whenever someone makes a request to this route right here. Remember that the arguments for this function are the **req** and **res** objects. Req represents the incoming request and res represents the outgoing response. We're simply going to send back an immediate response which will be **req.user**, so this will test to make sure that someone who has already gone through the OAuth flow and in theory logged into our application can now get access to the user.
+
+When we actually go on **localhost:5000/auth/google** and then sign in, you'll notice a **GET** error. It should initialize our cookie and should kick our user ID into the cookie and then return that cookie the browser. In theory, we now have a cookie tied to our application that identifies me as a very particular user. We'll fix the error in a bit but currently we are considered to be logged in and authenticated to our application.
+
+If we now enter the following URL into the browser:
+
+```
+localhost:5000/api/current_user
+```
+
+we'll actually receive the user ID as well as the google ID.
+
+# Logging Out Users
+
+We're now going to add a route to handle for logging users out of the application. If we go into our **authRoutes** file, we're going to create another route and say that whenever a user who is authenticated makes a request to the route **/api/logout** we will logout the user from the application. We'll be implementing the method **req.logout()** which will kill the cookie for that particular user and log them out.
