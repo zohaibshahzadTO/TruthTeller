@@ -380,3 +380,39 @@ Two good reasons for this approach:
 - When we use prod key like this, we can store all these keys remotely on heroku servers. All the developer keys can still remain on our personal laptops. Its possible something can happen to our laptop/computers (stolen/lost).
 
 - It also allows us to have two separate Mongo databases. Whenever we deploy our application to production. We want to have a clean database existing in production that has only our users data and we always treat that as pristine data that we will never manually mess around with at any given time. In the development world, if we have a separate database, we can decide to add records, delete records, add/delete/change collections, etc., without having the fear of accidentally breaking all of our users production data.
+
+# Moving Onto the Client Side
+
+Now we'll move onto the client side of the application. First we'll install the following package into our app using our terminal:
+
+```
+npm install -g create-react-app
+```
+
+after we'll then install the client feature:
+
+```
+npx create-react-app client
+```
+
+You'll notice that after the installation of react and react client onto the application that there's a separate server now when running the react part of the app. The question now is why not use the Express.js app we already have and implement the React portion on top of it. Well, lets recall that the Express server we already have pulls some information out of MongoDB, then it responds to requests that the browser makes with some amount f JSON or something that says "hey, here's your user model or here's how you go through the OAuth flow, etc". Now the react side of our application is going to eventually take a bunch of different component files. Its then going to spit out a single bundle **.js** file that will be loaded up into the browser. Essentially right now we have one development server for our front-end and one for our back-end handling the route handling and data.
+
+We could absolutely just used one server for this whole application in the beginning, however the **create-react-app** build created by Facebook has so much pre-built configuration already placed into it which would save us time in trying to wire together webpack and babel and the development server.
+
+# Running the Client and Server
+
+In order to run both servers simultaneously, we'll need to install a package that's going to help us run two separate severs with a single command. Just to note, we now have two separate **package.json** files.
+
+Notice we modified the scripts section of the file and added:
+
+```
+"dev": "concurrently \"npm run server\" \"npm run client\""
+```
+
+That script allows us to run both servers concurrently and we need to install the following library to make it happen:
+
+```
+npm install --save concurrently
+```
+
+Now if want to run both servers, all we do is go on our terminal or command prompt and enter **npm run dev** which kick off that whole process.
